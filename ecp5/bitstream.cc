@@ -816,8 +816,8 @@ void write_bitstream(Context *ctx, std::string base_config_file, std::string tex
                     other = "PIOD";
                 else
                     log_error("cannot place differential IO at location %s\n", pio.c_str());
-                // cc.tiles[pio_tile].add_enum(other + ".BASE_TYPE", "_NONE_");
-                // cc.tiles[pic_tile].add_enum(other + ".BASE_TYPE", "_NONE_");
+                cc.tiles[pio_tile].add_enum(other + ".BASE_TYPE", "_NONE_");
+                cc.tiles[pic_tile].add_enum(other + ".BASE_TYPE", "_NONE_");
                 cc.tiles[pio_tile].add_enum(other + ".PULLMODE", "NONE");
                 cc.tiles[pio_tile].add_enum(pio + ".PULLMODE", "NONE");
             }
@@ -842,7 +842,8 @@ void write_bitstream(Context *ctx, std::string base_config_file, std::string tex
             if (ci->attrs.count(ctx->id("PULLMODE")))
                 cc.tiles[pio_tile].add_enum(pio + ".PULLMODE", str_or_default(ci->attrs, ctx->id("PULLMODE"), "NONE"));
             if (ci->attrs.count(ctx->id("DIFFRESISTOR")))
-                cc.tiles[pio_tile].add_enum(pio + ".DIFFRESISTOR", str_or_default(ci->attrs, ctx->id("DIFFRESISTOR"), "OFF"));
+                cc.tiles[pio_tile].add_enum(pio + ".DIFFRESISTOR",
+                                            str_or_default(ci->attrs, ctx->id("DIFFRESISTOR"), "OFF"));
             if (ci->attrs.count(ctx->id("TERMINATION"))) {
                 auto vccio = get_vccio(ioType_from_str(iotype));
                 switch (vccio) {
@@ -1268,7 +1269,7 @@ void write_bitstream(Context *ctx, std::string base_config_file, std::string tex
         } else if (ci->type == id_TRELLIS_ECLKBUF) {
         } else if (ci->type == id_DQSBUFM) {
             Loc loc = ctx->getBelLocation(ci->bel);
-            bool l = loc.y < 10;
+            bool l = loc.x < 10;
             std::string pic = l ? "PICL" : "PICR";
             TileGroup tg;
             tg.tiles.push_back(ctx->getTileByTypeAndLocation(loc.y - 2, loc.x, pic + "1_DQS0"));
